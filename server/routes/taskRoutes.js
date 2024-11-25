@@ -7,6 +7,7 @@ import {
   duplicateTask,
   getTask,
   getTasks,
+  manageDependencies,
   postTaskActivity,
   trashTask,
   updateTask,
@@ -26,6 +27,8 @@ router.get("/:id", protectRoute, getTask);
 router.put("/create-subtask/:id", protectRoute, isAdminRoute, createSubTask);
 router.put("/update/:id", protectRoute, isAdminRoute, updateTask);
 router.put("/:id", protectRoute, isAdminRoute, trashTask);
+router.put("/dependencies/:id", protectRoute, isAdminRoute, manageDependencies); // New route
+
 
 router.delete(
   "/delete-restore/:id?",

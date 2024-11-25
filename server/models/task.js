@@ -43,6 +43,7 @@ const taskSchema = new Schema(
     ],
     assets: [String],
     team: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    // dependencies: [{ type: Schema.Types.ObjectId, ref: "Task" }],
     isTrashed: { type: Boolean, default: false },
   },
   { timestamps: true }

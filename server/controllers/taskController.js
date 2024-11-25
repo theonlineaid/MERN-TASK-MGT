@@ -6,12 +6,17 @@ export const createTask = async (req, res) => {
   try {
     const { userId } = req.user;
 
-    const { title, team, stage, date, priority, assets } = req.body;
+    const { title, team, stage, date, priority, assets,dependencies } = req.body;
 
     let text = "New task has been assigned to you";
     if (team?.length > 1) {
       text = text + ` and ${team?.length - 1} others.`;
     }
+
+     // Validate dependencies if provided
+    //  if (dependencies && !Array.isArray(dependencies)) {
+    //   return res.status(400).json({ status: false, message: "Dependencies must be an array of task IDs." });
+    // }
 
     text =
       text +
@@ -33,6 +38,7 @@ export const createTask = async (req, res) => {
       priority: priority.toLowerCase(),
       assets,
       activities: activity,
+      // dependencies: dependencies || [], // Include dependencies
     });
 
     await Notice.create({
@@ -350,5 +356,48 @@ export const deleteRestoreTask = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(400).json({ status: false, message: error.message });
+  }
+};
+
+export const manageDependencies = async (req, res) => {
+  try {
+    const { id } = req.params; // Task ID to update
+    const { dependencies } = req.body; // Array of task IDs to add as dependencies
+
+    if (!Array.isArray(dependencies)) {
+      return res
+        .status(400)
+        .json({ status: false, message: "Dependencies must be an array of task IDs." });
+    }
+
+    // Validate if dependencies exist in the database
+    const validTasks = await Task.find({ _id: { $in: dependencies } });
+    if (validTasks.length !== dependencies.length) {
+      return res
+        .status(400)
+        .json({ status: false, message: "Some dependencies are invalid or do not exist." });
+    }
+
+    // Update the task with the new dependencies
+    const updatedTask = await Task.findByIdAndUpdate(
+      id,
+      { $set: { dependencies } },
+      { new: true }
+    ).populate("dependencies"); // Optionally populate the dependencies
+
+    if (!updatedTask) {
+      return res
+        .status(404)
+        .json({ status: false, message: "Task not found." });
+    }
+
+    return res.status(200).json({
+      status: true,
+      task: updatedTask,
+      message: "Dependencies updated successfully.",
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ status: false, message: "Internal server error." });
   }
 };

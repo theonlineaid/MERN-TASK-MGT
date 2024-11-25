@@ -13,8 +13,8 @@ import Tasks from "./pages/Tasks";
 import Trash from "./pages/Trash";
 import Users from "./pages/Users";
 import Dashboard from "./pages/dashboard";
-import { setOpenSidebar } from "./redux/slices/authSlice";
-
+import { setOpenSidebar } from "./redux/slices/uiSlice";
+// 
 function Layout() {
   const { user } = useSelector((state) => state.auth);
 
@@ -40,53 +40,50 @@ function Layout() {
     <Navigate to='/log-in' state={{ from: location }} replace />
   );
 }
-
 const MobileSidebar = () => {
-  const { isSidebarOpen } = useSelector((state) => state.auth);
-  const mobileMenuRef = useRef(null);
+  const { isSidebarOpen } = useSelector((state) => state.ui);  // Ensure 'isSidebarOpen' is correctly set in redux
   const dispatch = useDispatch();
-
+  
   const closeSidebar = () => {
     dispatch(setOpenSidebar(false));
   };
 
   return (
     <>
+      {/* Transition component to handle showing and hiding of the sidebar */}
       <Transition
-        show={isSidebarOpen}
+        show={isSidebarOpen}  // This controls visibility
         as={Fragment}
         enter='transition-opacity duration-700'
-        enterFrom='opacity-x-10'
-        enterTo='opacity-x-100'
+        enterFrom='opacity-0'
+        enterTo='opacity-100'
         leave='transition-opacity duration-700'
-        leaveFrom='opacity-x-100'
-        leaveTo='opacity-x-0'
+        leaveFrom='opacity-100'
+        leaveTo='opacity-0'
       >
-        {(ref) => (
-          <div
-            ref={(node) => (mobileMenuRef.current = node)}
-            className={clsx(
-              "md:hidden w-full h-full bg-black/40 transition-all duration-700 transform ",
-              isSidebarOpen ? "translate-x-0" : "translate-x-full"
-            )}
-            onClick={() => closeSidebar()}
-          >
-            <div className='bg-white w-3/4 h-full'>
-              <div className='w-full flex justify-end px-5 mt-5'>
-                <button
-                  onClick={() => closeSidebar()}
-                  className='flex justify-end items-end'
-                >
-                  <IoClose size={25} />
-                </button>
-              </div>
+        <div
+          className={clsx(
+            "md:hidden w-full h-full bg-black/40 transition-all duration-700 transform",
+            isSidebarOpen ? "translate-x-0" : "translate-x-full"
+          )}
+          onClick={closeSidebar}  // Close sidebar when clicking outside
+        >
+          <div className='bg-white w-3/4 h-full'>
+            <div className='w-full flex justify-end px-5 mt-5'>
+              <button
+                onClick={closeSidebar}
+                className='flex justify-end items-end'
+              >
+                <IoClose size={25} />
+              </button>
+            </div>
 
-              <div className='-mt-10'>
-                <Sidebar />
-              </div>
+            {/* Sidebar content */}
+            <div className='-mt-10'>
+              <Sidebar />
             </div>
           </div>
-        )}
+        </div>
       </Transition>
     </>
   );
