@@ -17,6 +17,8 @@ const Login = () => {
     try {
       // Perform login mutation
       const userData = await login({ email: data.email, password: data.password }).unwrap();
+
+      console.log(userData)
       
       // On success, store user data in Redux
       dispatch(setUser(userData));

@@ -5,6 +5,8 @@ import { IoLogOutOutline } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getInitials } from "../utils";
+import { logout } from "../redux/auth/authSlice";
+import { useLogoutMutation } from "../redux/auth/authApi";
 
 const UserAvatar = () => {
   const [open, setOpen] = useState(false);
@@ -12,9 +14,16 @@ const UserAvatar = () => {
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [logoutApi] = useLogoutMutation();
 
-  const logoutHandler = () => {
-    console.log("logout");
+  const logoutHandler = async () => {
+    try {
+      await logoutApi().unwrap();
+      dispatch(logout()); 
+      console.log("Logout successful");
+    } catch (err) {
+      console.error("Failed to logout:", err);
+    }
   };
 
   return (

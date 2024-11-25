@@ -28,11 +28,13 @@ const Navbar = () => {
             className='flex-1 outline-none bg-transparent placeholder:text-gray-500 text-gray-800'
           />
         </div>
+
+
       </div>
 
       <div className='flex gap-2 items-center'>
+        <p style={{fontWeight: "bold", fontSize: "10px"}}>{user?.isAdmin ? "Admin" : "User"}</p>
         <NotificationPanel />
-
         <UserAvatar />
       </div>
     </div>

@@ -6,13 +6,13 @@ import { Dialog } from "@headlessui/react";
 import Textbox from "./Textbox";
 import Loading from "./Loader";
 import Button from "./Button";
+import { useCreateUserMutation } from "../redux/auth/authApi";
 
 const AddUser = ({ open, setOpen, userData }) => {
-  let defaultValues = userData ?? {};
+  let defaultValues = userData ?? {};  // Set the default form values to userData if it exists
   const { user } = useSelector((state) => state.auth);
 
-  const isLoading = false,
-    isUpdating = false;
+  const [createUser, { isLoading, isError, isSuccess, error }] = useCreateUserMutation();
 
   const {
     register,
@@ -20,7 +20,16 @@ const AddUser = ({ open, setOpen, userData }) => {
     formState: { errors },
   } = useForm({ defaultValues });
 
-  const handleOnSubmit = () => {};
+  // Handle form submission
+  const handleOnSubmit = async (data) => {
+    try {
+      await createUser(data).unwrap();  // This triggers the createUser mutation with the form data
+      setOpen(false); // Close modal after successful submission
+    } catch (err) {
+      // Handle error (e.g. show error messages)
+      console.error("Failed to create user:", err);
+    }
+  };
 
   return (
     <>
@@ -80,7 +89,8 @@ const AddUser = ({ open, setOpen, userData }) => {
             />
           </div>
 
-          {isLoading || isUpdating ? (
+          {/* Loading indicator or form actions */}
+          {isLoading ? (
             <div className='py-5'>
               <Loading />
             </div>
@@ -88,7 +98,7 @@ const AddUser = ({ open, setOpen, userData }) => {
             <div className='py-3 mt-4 sm:flex sm:flex-row-reverse'>
               <Button
                 type='submit'
-                className='bg-blue-600 px-8 text-sm font-semibold text-white hover:bg-blue-700  sm:w-auto'
+                className='bg-blue-600 px-8 text-sm font-semibold text-white hover:bg-blue-700 sm:w-auto'
                 label='Submit'
               />
 
@@ -98,6 +108,20 @@ const AddUser = ({ open, setOpen, userData }) => {
                 onClick={() => setOpen(false)}
                 label='Cancel'
               />
+            </div>
+          )}
+
+          {/* Show error message if mutation fails */}
+          {isError && (
+            <div className="text-red-500 mt-4">
+              {error?.data?.message || "An error occurred while creating the user."}
+            </div>
+          )}
+
+          {/* Show success message if mutation succeeds */}
+          {isSuccess && (
+            <div className="text-green-500 mt-4">
+              User created successfully!
             </div>
           )}
         </form>

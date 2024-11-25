@@ -7,30 +7,37 @@ export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({
     baseUrl: API_URL,
-    credentials: "include", // Make sure cookies are included in the requests
+    credentials: "include", 
   }),
   endpoints: (builder) => ({
     // Login endpoint
     login: builder.mutation({
       query: (credentials) => ({
-        url: "/user/login", // The backend login route
+        url: "/user/login", 
         method: "POST",
-        body: credentials, // Sending credentials (email and password)
+        body: credentials, 
       }),
     }),
     // Register endpoint (if needed)
     createUser: builder.mutation({
       query: (userData) => ({
-        url: "/user/register", // The backend register route
+        url: "/user/register", 
         method: "POST",
-        body: userData, // Send user data to register
+        body: userData, 
       }),
     }),
-    // Additional endpoints can go here
+    // Logout endpoint
+    logout: builder.mutation({
+      query: () => ({
+        url: "/user/logout", 
+        method: "POST", 
+      }),
+    }),
   }),
 });
 
 export const {
-  useLoginMutation, // Hook for login
-  useCreateUserMutation, // Hook for registration
+  useLoginMutation, 
+  useCreateUserMutation, 
+  useLogoutMutation
 } = authApi;

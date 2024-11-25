@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-// import { user } from "../../assets/data";
 
 const initialState = {
   user: localStorage.getItem("userInfo")
@@ -17,16 +16,13 @@ const uiSlice = createSlice({
       state.user = action.payload;  // Set the user information in the state
       localStorage.setItem("userInfo", JSON.stringify(action.payload));  // Store the user information in localStorage
     },
-    logout: (state) => {
-      state.user = null;  // Clear user from state
-      localStorage.removeItem("userInfo");  // Remove user information from localStorage
-    },
+   
     setOpenSidebar: (state, action) => {
       state.isSidebarOpen = action.payload;  // Toggle sidebar open/close state
     },
   },
 });
 
-export const { setCredentials, logout, setOpenSidebar } = uiSlice.actions;
+export const { setCredentials, setOpenSidebar } = uiSlice.actions;
 
 export default uiSlice.reducer;
